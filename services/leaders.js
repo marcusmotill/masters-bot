@@ -56,9 +56,6 @@ const calculatePlayers = (scorecard, callback) => {
                 console.log("Unable to find", selection);
                 return 0;
             }
-            if (playerScorecard.relativeScore == "E") {
-                playerScorecard.relativeScore = 0;
-            }
 
             var row = `\t•${selection} ${playerScorecard.relativeScore}\n`;
             playersString = playersString + row;
