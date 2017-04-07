@@ -60,7 +60,7 @@ const calculatePlayers = (scorecard, callback) => {
                 playerScorecard.relativeScore = 0;
             }
 
-            var row = `  ${selection} ${playerScorecard.relativeScore}\n`;
+            var row = `\t•${selection} ${playerScorecard.relativeScore}\n`;
             playersString = playersString + row;
         });
         return { name: entryItem.name, playersString };
