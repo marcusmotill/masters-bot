@@ -39,7 +39,7 @@ const getLeadersAndPost = request => {
     });
 };
 
-const respond = () => {
+const respond = function() {
     const request = JSON.parse(this.req.chunks[0]);
 
     if (request.text && botRegex.test(request.text)) {

@@ -11,13 +11,13 @@ const router = new director.http.Router({
     }
 });
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(function(req, res) {
     req.chunks = [];
     req.on("data", function(chunk) {
         req.chunks.push(chunk.toString());
     });
 
-    router.dispatch(req, res, (err) => {
+    router.dispatch(req, res, function(err) {
         res.writeHead(err.status, { "Content-Type": "text/plain" });
         res.end(err.message);
     });
