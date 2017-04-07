@@ -40,7 +40,7 @@ const calculateLeaders = (scorecard, callback) => {
     var returnText = '';
     _.forEach(leadersArr, (leaderItem, i) => {
         var index = i + 1;
-        var row = `${index}. ${leaderItem.name} Total: ${leaderItem.total}\n`;
+        var row = `${index}. ${leaderItem.name} Total: ${leaderItem.total > 0 ? '+' : ''}${leaderItem.total}\n`;
         returnText = returnText + row;
     });
     return callback(null, returnText);
