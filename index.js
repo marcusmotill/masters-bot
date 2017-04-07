@@ -7,7 +7,7 @@ const botRegex = /^\/masters*/;
 const bot_id = process.env.BOT_ID;
 
 const getLeadersAndPost = request => {
-    LeaderService.getLeaders((err, leaderBoard) => {
+    LeaderService.getLeaders((err, leaders) => {
         const message = request.text;
         const sender = request.sender_id;
         const options = {
@@ -18,7 +18,7 @@ const getLeadersAndPost = request => {
 
         const body = {
             bot_id,
-            text: leaderBoard
+            text: leaders
         };
 
         console.log(`Sending ${_.get(body, "text")} to ${bot_id}`);

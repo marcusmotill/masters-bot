@@ -20,8 +20,30 @@ const scrapper = {
 };
 
 const calculateLeaders = (scorecard, callback) => {
-    var leaders = _.map(entries, "name");
-    return callback(null, leaders);
+    var leadersArr = _.map(entries, entryItem => {
+        var total = _.sumBy(entryItem.selections, selection => {
+            var playerScorecard = _.find(scorecard.items.players, { playerName: selection });
+            if (!playerScorecard) {
+                console.log("Unable to find", selection);
+                return 0;
+            }
+            if (playerScorecard.relativeScore == "E") {
+                playerScorecard.relativeScore = 0;
+            }
+            playerScorecard.relativeScore = _.toNumber(playerScorecard.relativeScore);
+            return playerScorecard.relativeScore;
+        });
+        return { name: entryItem.name, total };
+    });
+    
+    leadersArr = _.sortBy(leadersArr, 'total');
+    var returnText = '';
+    _.forEach(leadersArr, (leaderItem, i) => {
+        var index = i + 1;
+        var row = `${index}. ${leaderItem.name} Total: ${leaderItem.total}\n`;
+        returnText = returnText + row;
+    });
+    return callback(null, returnText);
 };
 
 const getLeaders = callback => {
@@ -31,9 +53,9 @@ const getLeaders = callback => {
             leaderboard: (scorecard, cb) => calculateLeaders(scorecard, cb)
         },
         (err, results) => {
+            console.log(results.leaderboard);
             return callback(null, results.leaderboard);
         }
     );
 };
-
 exports.getLeaders = getLeaders;
