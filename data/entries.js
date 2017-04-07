@@ -1,7 +1,7 @@
 var entries = [
     {
         name: "Marcus Motill",
-        selections: ["Rory McIlroy", "Rory McIlroy", "Rickie Fowler", "Phil Mickelson", "Jordan Spieth"]
+        selections: ["Rory McIlroy", "Rickie Fowler", "Phil Mickelson", "Jordan Spieth"]
     },
     {
         name: "Alex Henn",

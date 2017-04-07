@@ -46,6 +46,35 @@ const calculateLeaders = (scorecard, callback) => {
     return callback(null, returnText);
 };
 
+const calculatePlayers = (scorecard, callback) => {
+    var playersArr = _.map(entries, entryItem => {
+        var playersString = '';
+        
+        _.forEach(entryItem.selections, selection => {
+            var playerScorecard = _.find(scorecard.items.players, { playerName: selection });
+            if (!playerScorecard) {
+                console.log("Unable to find", selection);
+                return 0;
+            }
+            if (playerScorecard.relativeScore == "E") {
+                playerScorecard.relativeScore = 0;
+            }
+
+            var row = `  ${selection} ${playerScorecard.relativeScore}\n`;
+            playersString = playersString + row;
+        });
+        return { name: entryItem.name, playersString };
+    });
+    
+    var returnText = '';
+    _.forEach(playersArr, (playerItem, i) => {
+        var index = i + 1;
+        var row = `${playerItem.name}\n${playerItem.playersString}`;
+        returnText = returnText + row;
+    });
+    return callback(null, returnText);
+};
+
 const getLeaders = callback => {
     async.autoInject(
         {
@@ -58,4 +87,19 @@ const getLeaders = callback => {
         }
     );
 };
+
+const getPlayers = callback => {
+    async.autoInject(
+        {
+            scorecard: cb => xray(url, scrapper)(cb),
+            leaderboard: (scorecard, cb) => calculatePlayers(scorecard, cb)
+        },
+        (err, results) => {
+            console.log(results.leaderboard);
+            return callback(null, results.leaderboard);
+        }
+    );
+};
+
 exports.getLeaders = getLeaders;
+exports.getPlayers = getPlayers;
