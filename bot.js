@@ -1,31 +1,53 @@
-const http = require("http");
-const director = require("director");
-const bot = require("./bot.js");
+const HTTPS = require("https");
+const _ = require("lodash");
+const async = require("async");
+const LeaderService = require("./services/leaders.js");
 
-const port = Number(process.env.PORT || 5000);
+const botRegex = /^\/masters*/;
+const bot_id = process.env.BOT_ID;
 
-const router = new director.http.Router({
-    "/": {
-        post: bot.respond,
-        get: ping
+const getLeadersAndPost = request => {
+    LeaderService.getLeaders((err, leaders) => {
+        const message = request.text;
+        const sender = request.sender_id;
+        const options = {
+            hostname: "api.groupme.com",
+            path: "/v3/bots/post",
+            method: "POST"
+        };
+
+        const body = {
+            bot_id,
+            text: leaders
+        };
+
+        console.log(`Sending ${_.get(body, "text")} to ${bot_id}`);
+
+        botReq = HTTPS.request(options, function(res) {
+            console.log(`res.statusCode ${res.statusCode}`);
+        });
+
+        botReq.on("error", function(err) {
+            console.log(`error posting message ${JSON.stringify(err)}`);
+        });
+
+        botReq.on("timeout", function(err) {
+            console.log(`timeout posting message ${JSON.stringify(err)}`);
+        });
+
+        botReq.end(JSON.stringify(body));
+    });
+};
+
+const respond = () => {
+    const request = JSON.parse(this.req.chunks[0]);
+
+    if (request.text && botRegex.test(request.text)) {
+        getLeadersAndPost(request);
     }
-});
-
-const server = http.createServer((req, res) => {
-    req.chunks = [];
-    req.on("data", function(chunk) {
-        req.chunks.push(chunk.toString());
-    });
-
-    router.dispatch(req, res, (err) => {
-        res.writeHead(err.status, { "Content-Type": "text/plain" });
-        res.end(err.message);
-    });
-});
-
-server.listen(port);
-
-function ping() {
+    
     this.res.writeHead(200);
-    this.res.end("Hey this is masters Bot");
-}
+    return this.res.end();
+};
+
+exports.respond = respond;
