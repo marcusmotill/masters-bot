@@ -8,7 +8,7 @@ const common = {
 
 var entries = [
     {
-        name: 'Marcus Motill',
+        name: 'Macus',
         selections: [common.spieth, common.jt, common.dj, common.tiger]
     },
     {
