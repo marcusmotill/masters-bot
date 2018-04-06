@@ -1,23 +1,31 @@
+const common = {
+    rory: 'Rory McIlroy',
+    spieth: 'Jordan Spieth',
+    jt: 'Justin Thomas',
+    tiger: 'Tiger Woods',
+    dj: 'Dustin Johnson'
+};
+
 var entries = [
     {
-        name: "Marcus Motill",
-        selections: ["Rory McIlroy", "Rickie Fowler", "Phil Mickelson", "Jordan Spieth"]
+        name: 'Marcus Motill',
+        selections: [common.spieth, common.jt, common.dj, common.tiger]
     },
     {
-        name: "Alex Henn",
-        selections: ["Jason Day", "Rory McIlroy", "Jordan Spieth", "Justin Rose"]
+        name: 'Holdr',
+        selections: [common.jt, common.rory, common.spieth, common.dj]
     },
     {
-        name: "Everybody calls me G-Baby whatsup",
-        selections: ["Jordan Spieth", "Rory McIlroy", "Hideki Matsuyama", "Bubba Watson"]
+        name: 'gabe',
+        selections: [common.dj, common.rory, common.tiger, common.spieth]
     },
     {
-        name: "Etzel",
-        selections: ["Rory McIlroy", "Jordan Spieth", "Hideki Matsuyama", "Justin Thomas"]
+        name: 'white',
+        selections: ['Phil Mickelson', common.rory, common.jt, common.spieth]
     },
     {
-        name: "Young Whitey",
-        selections: ["Bubba Watson", "Rickie Fowler", "Rory McIlroy", "Jordan Spieth"]
+        name: 'alvey',
+        selections: [common.tiger, common.spieth, 'Rickie Fowler', 'Bubba Watson']
     }
 ];
 
