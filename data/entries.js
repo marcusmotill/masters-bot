@@ -30,6 +30,10 @@ var entries = [
     {
         name: 'Pelton',
         selections: ['Dustin Johnson', 'Justin Rose', 'Bubba Watson', 'Zach Johnson', 'Jason Day', 'Hideki Matsuyama']
+    },
+    {
+        name: 'Joe',
+        selections: ['Justin Thomas', 'Xander Schauffele', 'Bryson DeChambeau', 'Sebastian Munoz', 'Louis Oosthuizen', 'C.T. Pan']
     }
 ];
 

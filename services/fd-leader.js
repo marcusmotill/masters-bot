@@ -101,8 +101,7 @@ fetch("https://site.web.api.espn.com/apis/site/v2/sports/golf/pga/leaderboard/pl
             if (playerScorecard) {
                 //console.log(`found ${player}`);
             } else {
-                console.log(`did not find ${player}`)
-                return;
+                throw new Error(`did not find ${player}`);
             }
 
             runningResults[entry.name].score += rankScore(playerScorecard.rank)
