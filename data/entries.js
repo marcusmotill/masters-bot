@@ -8,24 +8,28 @@ const common = {
 
 var entries = [
     {
-        name: 'Macus',
-        selections: [common.spieth, common.jt, common.dj, common.tiger]
+        name: 'Marcus',
+        selections: ['Dustin Johnson', 'Jon Rahm', 'Collin Morikawa', 'C.T. Pan', 'Xander Schauffele', 'Nate Lashley']
     },
     {
         name: 'Holdr',
-        selections: [common.jt, common.rory, common.spieth, common.dj]
+        selections: []
     },
     {
         name: 'gabe',
-        selections: [common.dj, common.rory, common.tiger, common.spieth]
+        selections: ['Tony Finau', 'Cameron Smith', 'Justin Thomas', 'Louis Oosthuizen', 'Hideki Matsuyama', 'Cameron Champ']
     },
     {
-        name: 'white',
-        selections: ['Phil Mickelson', common.rory, common.jt, common.spieth]
+        name: "Mark's Team",
+        selections: ['Tony Finau', "Dustin Johnson", 'Justin Thomas', 'Fred Couples', `Abraham Ancer`, 'Bubba Watson']
     },
     {
         name: 'alvey',
-        selections: [common.tiger, common.spieth, 'Rickie Fowler', 'Bubba Watson']
+        selections: ['Brooks Koepka', 'Jon Rahm', 'Rickie Fowler', 'Jordan Spieth', 'Bubba Watson', 'John Augenstein']
+    },
+    {
+        name: 'Pelton',
+        selections: ['Dustin Johnson', 'Justin Rose', 'Bubba Watson', 'Zach Johnson', 'Jason Day', 'Hideki Matsuyama']
     }
 ];
 
