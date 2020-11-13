@@ -149,7 +149,10 @@ const getLeaderData = async () => {
 
             runningResults[entry.name].players.push({
                 name: player,
-                score: _.round(playerRankScore + eagleScore + birdieScore + parScore + bogeyScore + doubleScore, 2),
+                score: _.round(
+                    playerRankScore + eagleScore + birdieScore + parScore + bogeyScore + doubleScore,
+                    2
+                ),
                 rank: `${playerScorecard.rank} (${playerRankScore})`,
                 eagles: `${eagles.value} (${eagleScore})`,
                 birdies: `${birdies.value} (${birdieScore})`,
@@ -164,6 +167,7 @@ const getLeaderData = async () => {
         .map((value, name) => {
             value.name = name;
             value.players = _.reverse(_.sortBy(value.players, 'score'));
+            value.score = _.round(value.score, 2);
             return value;
         })
         .sortBy('score')
