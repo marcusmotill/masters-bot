@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "(cd client && npm install && npm run build) && node ./bin/www"
+    "postinstall": "(cd client && npm install && npm run build)",
+    "start": "(cd client && npm run build) && node ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
