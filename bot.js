@@ -1,7 +1,7 @@
 const HTTPS = require("https");
 const _ = require("lodash");
 const async = require("async");
-const LeaderService = require("./services/leaders.js");
+const LeaderService = require("../services/leaders.js");
 
 const mastersRegex = /^\/masters*/;
 const playerRegex = /^\/players*/;

@@ -73,30 +73,44 @@ const scoreMultipliers = {
     birdies: 3.1,
     pars: 0.5,
     bogeys: -1,
-    doubles: -3
+    doubles: -3,
 };
 
-fetch("https://site.web.api.espn.com/apis/site/v2/sports/golf/pga/leaderboard/players?region=us&lang=en&event=401219478", {
-    "headers": {
-        "accept": "*/*",
-        "accept-language": "en-US,en;q=0.9",
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-site"
-    },
-    "referrer": "https://www.espn.com/",
-    "referrerPolicy": "strict-origin-when-cross-origin",
-    "body": null,
-    "method": "GET",
-    "mode": "cors",
-    "credentials": "omit"
-}).then(results => results.json()).then(results => {
+const getLeaderData = async () => {
+    const results = await fetch(
+        'https://site.web.api.espn.com/apis/site/v2/sports/golf/pga/leaderboard/players?region=us&lang=en&event=401219478',
+        {
+            headers: {
+                accept: '*/*',
+                'accept-language': 'en-US,en;q=0.9',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-site',
+            },
+            referrer: 'https://www.espn.com/',
+            referrerPolicy: 'strict-origin-when-cross-origin',
+            body: null,
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'omit',
+        }
+    ).then((results) => results.json());
+
     // console.log(results.leaderboard[0])
     // console.log(results.leaderboard[0].stats)
     const runningResults = {};
     entries.forEach((entry) => {
-        runningResults[entry.name] = { score: 0, rankScore: 0, eagles: 0, birdies: 0, pars: 0, bogeys: 0, doublesPlus: 0 };
-        entry.selections.forEach(player => {
+        runningResults[entry.name] = {
+            score: 0,
+            rankScore: 0,
+            eagles: 0,
+            birdies: 0,
+            pars: 0,
+            bogeys: 0,
+            doublesPlus: 0,
+            players: [],
+        };
+        entry.selections.forEach((player) => {
             const playerScorecard = _.find(results.leaderboard, { fullName: player });
             if (playerScorecard) {
                 //console.log(`found ${player}`);
@@ -104,42 +118,82 @@ fetch("https://site.web.api.espn.com/apis/site/v2/sports/golf/pga/leaderboard/pl
                 throw new Error(`did not find ${player}`);
             }
 
-            runningResults[entry.name].score += rankScore(playerScorecard.rank)
-            runningResults[entry.name].rankScore += rankScore(playerScorecard.rank);
+            const playerRankScore = rankScore(playerScorecard.rank);
+            runningResults[entry.name].score += playerRankScore;
+            runningResults[entry.name].rankScore += playerRankScore;
 
             const eagles = _.find(playerScorecard.stats, { name: 'eagles' });
-            runningResults[entry.name].score += scoreMultipliers['eagles'] * eagles.value;
+            const eagleScore = scoreMultipliers['eagles'] * eagles.value;
+            runningResults[entry.name].score += eagleScore;
             runningResults[entry.name].eagles += eagles.value;
 
             const birdies = _.find(playerScorecard.stats, { name: 'birdies' });
-            runningResults[entry.name].score += scoreMultipliers['birdies'] * birdies.value;
+            const birdieScore = scoreMultipliers['birdies'] * birdies.value;
+            runningResults[entry.name].score += birdieScore;
             runningResults[entry.name].birdies += birdies.value;
 
             const pars = _.find(playerScorecard.stats, { name: 'pars' });
-            runningResults[entry.name].score += scoreMultipliers['pars'] * pars.value;
+            const parScore = scoreMultipliers['pars'] * pars.value;
+            runningResults[entry.name].score += parScore;
             runningResults[entry.name].pars += pars.value;
 
             const bogeys = _.find(playerScorecard.stats, { name: 'bogeys' });
-            runningResults[entry.name].score += scoreMultipliers['bogeys'] * bogeys.value;
+            const bogeyScore = scoreMultipliers['bogeys'] * bogeys.value;
+            runningResults[entry.name].score += bogeyScore;
             runningResults[entry.name].bogeys += bogeys.value;
 
             const doubles = _.find(playerScorecard.stats, { name: 'doubles' });
-            runningResults[entry.name].score += scoreMultipliers['doubles'] * doubles.value;
+            const doubleScore = scoreMultipliers['doubles'] * doubles.value;
+            runningResults[entry.name].score += doubleScore;
             runningResults[entry.name].doublesPlus += doubles.value;
-        })
+
+            runningResults[entry.name].players.push({
+                name: player,
+                score: _.round(playerRankScore + eagleScore + birdieScore + parScore + bogeyScore + doubleScore, 2),
+                rank: `${playerScorecard.rank} (${playerRankScore})`,
+                eagles: `${eagles.value} (${eagleScore})`,
+                birdies: `${birdies.value} (${birdieScore})`,
+                pars: `${pars.value} (${parScore})`,
+                bogeys: `${bogeys.value} (${bogeyScore})`,
+                doubles: `${doubles.value} (${doubleScore})`,
+            });
+        });
     });
 
-    const resultsArray = _.map(runningResults, (value, name) => {
-        value.name = name;
-        return value;
-    })
+    const resultsArray = _(runningResults)
+        .map((value, name) => {
+            value.name = name;
+            value.players = _.reverse(_.sortBy(value.players, 'score'));
+            return value;
+        })
+        .sortBy('score')
+        .reverse()
+        .value();
 
-    const leadersString = _(resultsArray).sortBy('score').reverse().map(score => `${score.name}: ${_.round(score.score, 2)}`).join('\n');
+    const leadersString = _(resultsArray)
+        .map((score) => `${score.name}: ${_.round(score.score, 2)}`)
+        .join('\n');
 
-    console.log(leadersString)
+    console.log(leadersString);
 
-    const breakDown = _(resultsArray).sortBy('score').reverse().map(score => `${score.name}: ${_.round(score.score, 2)}\n\trank score: ${_.round(score.rankScore, 2)}\n\teagles: ${_.round(score.eagles, 2)}\n\tbirdies: ${_.round(score.birdies, 2)}\n\tpars: ${_.round(score.pars, 2)}\n\tbogeys: ${_.round(score.bogeys, 2)}\n\tdoubles+: ${_.round(score.doublesPlus, 2)}`).join('\n');
+    const breakDown = _(resultsArray)
+        .map(
+            (score) =>
+                `${score.name}: ${_.round(score.score, 2)}\n\trank score: ${_.round(
+                    score.rankScore,
+                    2
+                )}\n\teagles: ${_.round(score.eagles, 2)}\n\tbirdies: ${_.round(
+                    score.birdies,
+                    2
+                )}\n\tpars: ${_.round(score.pars, 2)}\n\tbogeys: ${_.round(
+                    score.bogeys,
+                    2
+                )}\n\tdoubles+: ${_.round(score.doublesPlus, 2)}`
+        )
+        .join('\n');
 
-    console.log(breakDown)
-});
+    console.log(breakDown);
+    return resultsArray;
+};
 
+exports.getLeaderData = getLeaderData;
