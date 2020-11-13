@@ -164,33 +164,55 @@ const getLeaderData = async () => {
             const playerStats = knownPlayers[player];
 
             _.forEach(playerStats.rounds, (round, index) => {
-                const roundStats = _.get(round, 'statistics.categories[0].stats');
-
                 const roundPlayerRankScore = rankScore(round.currentPosition);
+                const scores = _.countBy(round.linescores, (item) => {
+                    const diff = item.value - item.par;
+                    if (diff < -1) {
+                        return 'eagle';
+                    }
 
-                const eagles = _.find(roundStats, { name: 'eagles' });
-                const eagleScore = scoreMultipliers['eagles'] * eagles.value;
-                totalEagles += eagles.value;
+                    if (diff === -1) {
+                        return 'birdie';
+                    }
+
+                    if (diff === 0) {
+                        return 'par';
+                    }
+
+                    if (diff === 1) {
+                        return 'bogey';
+                    }
+
+                    if (diff > 1) {
+                        return 'double';
+                    }
+                });
+
+                console.log(scores);
+
+                const eagles = scores['eagle'] || 0;
+                const eagleScore = scoreMultipliers['eagles'] * eagles;
+                totalEagles += eagles;
                 totalEagleScore += eagleScore;
 
-                const birdies = _.find(roundStats, { name: 'birdies' });
-                const birdieScore = scoreMultipliers['birdies'] * birdies.value;
-                totalBirdies += birdies.value;
+                const birdies = scores['birdie'] || 0;
+                const birdieScore = scoreMultipliers['birdies'] * birdies;
+                totalBirdies += birdies;
                 totalBirdieScore += birdieScore;
 
-                const pars = _.find(roundStats, { name: 'pars' });
-                const parScore = scoreMultipliers['pars'] * pars.value;
-                totalPars += pars.value;
+                const pars = scores['par'] || 0;
+                const parScore = scoreMultipliers['pars'] * pars;
+                totalPars += pars;
                 totalParScore += parScore;
 
-                const bogeys = _.find(roundStats, { name: 'bogeys' });
-                const bogeyScore = scoreMultipliers['bogeys'] * bogeys.value;
-                totalBogeys += bogeys.value;
+                const bogeys = scores['bogey'] || 0;
+                const bogeyScore = scoreMultipliers['bogeys'] * bogeys;
+                totalBogeys += bogeys;
                 totalBogeyScore += bogeyScore;
 
-                const doubles = _.find(roundStats, { name: 'doubleBogeys' });
-                const doubleScore = scoreMultipliers['doubles'] * doubles.value;
-                totalDoubles += doubles.value;
+                const doubles = scores['double'] || 0;
+                const doubleScore = scoreMultipliers['doubles'] * doubles;
+                totalDoubles += doubles;
                 totalDoubleScore += doubleScore;
 
                 runningResults[entry.name].rounds[index].push({
@@ -199,12 +221,12 @@ const getLeaderData = async () => {
                         roundPlayerRankScore + eagleScore + birdieScore + parScore + bogeyScore + doubleScore,
                         2
                     ),
-                    rank: `${round.currentPosition} (${roundPlayerRankScore})`,
-                    eagles: `${eagles.value} (${eagleScore})`,
-                    birdies: `${birdies.value} (${birdieScore})`,
-                    pars: `${pars.value} (${parScore})`,
-                    bogeys: `${bogeys.value} (${bogeyScore})`,
-                    doubles: `${doubles.value} (${doubleScore})`,
+                    rank: `${round.currentPosition} (${_.round(roundPlayerRankScore, 2)})`,
+                    eagles: `${eagles} (${_.round(eagleScore, 2)})`,
+                    birdies: `${birdies} (${_.round(birdieScore, 2)})`,
+                    pars: `${pars} (${_.round(parScore, 2)})`,
+                    bogeys: `${bogeys} (${_.round(bogeyScore, 2)})`,
+                    doubles: `${doubles} (${_.round(doubleScore, 2)})`,
                 });
 
                 runningResults[entry.name].rounds[index] = _(runningResults[entry.name].rounds[index])
@@ -222,12 +244,12 @@ const getLeaderData = async () => {
                     playerRankScore + totalEagles + totalBirdies + totalPars + totalBogeys + totalDoubles,
                     2
                 ),
-                rank: `${playerScorecard.rank} (${playerRankScore})`,
-                eagles: `${totalEagles} (${totalEagleScore})`,
-                birdies: `${totalBirdies} (${totalBirdieScore})`,
-                pars: `${totalPars} (${totalParScore})`,
-                bogeys: `${totalBogeys} (${totalBogeyScore})`,
-                doubles: `${totalDoubles} (${totalDoubleScore})`,
+                rank: `${playerScorecard.rank} (${_.round(playerRankScore, 2)})`,
+                eagles: `${totalEagles} (${_.round(totalEagleScore, 2)})`,
+                birdies: `${totalBirdies} (${_.round(totalBirdieScore, 2)})`,
+                pars: `${totalPars} (${_.round(totalParScore, 2)})`,
+                bogeys: `${totalBogeys} (${_.round(totalBogeyScore, 2)})`,
+                doubles: `${totalDoubles} (${_.round(totalDoubleScore, 2)})`,
             });
         });
     });
