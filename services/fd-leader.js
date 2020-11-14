@@ -120,7 +120,9 @@ const getLeaderData = async () => {
             if (playerScorecard) {
                 //console.log(`found ${player}`);
             } else {
-                throw new Error(`did not find ${player}`);
+                console.error(`did not find ${player}`)
+                return;
+                //throw new Error(`did not find ${player}`);
             }
 
             const playerRankScore = rankScore(playerScorecard.rank);
@@ -187,8 +189,6 @@ const getLeaderData = async () => {
                         return 'double';
                     }
                 });
-
-                console.log(scores);
 
                 const eagles = scores['eagle'] || 0;
                 const eagleScore = scoreMultipliers['eagles'] * eagles;
